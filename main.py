@@ -8,10 +8,10 @@ quizzes = [
     {
         "image_url": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Turtle_ship_model.jpg",
         "caption": "거북선 전체 모습",
-        "question": "거북선의 사각지대는 어디인가요?",
-        "options": ["바닥 아래", "지붕 위", "용머리 앞", "노 젓는 부분 측면"],
-        "answer": "노 젓는 부분 측면",
-        "explanation": "✅ 거북선은 측면의 노 젓는 구간이 사각지대로 남아 있었습니다."
+        "question": "이순신이 탄 배의 이름은?",
+        "options": ["바닥배", "겨울왕국의배", "용머리 배","거북선"],
+        "answer": "거북선",
+        "explanation": "✅ 거북선은 이순신 장군님께서 타신 배의이름입니다"
     },
     {
         "image_url": "https://upload.wikimedia.org/wikipedia/commons/7/7e/General_Gang_Gam-chan.jpg",
