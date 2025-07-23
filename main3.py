@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>국가 전투 구설 시뮬레이션</title>
+  <title>국가 전투 구슬 시뮬레이션</title>
   <style>
     body {
       background-color: #1e1e1e;
@@ -46,9 +46,8 @@
   </div>
   <div id="summary">
     <h2>고려 vs 몽골</h2>
-    <p>고려는 강한 도적을 기절으로 몽골의 가편적인 기발을 맞아 거절했습니다.</p>
-    <p>전투 결과: <strong>고려 승!</strong></p>
-    <p>후기: 몽골은 회간을 걸치고 다시 탑재를 목표로 했지만, 고려는 다시 건국적 답령을 갖고 세금을 복구했습니다.</p>
+    <p>고려는 강한 도적을 기절로 몽골의 가편적인 기발을 맞아 거절했습니다.</p>
+    <p>※ 마우스로 각 진영을 끌어다 충돌시킬 수 있습니다. 승패는 없습니다!</p>
   </div>
   <script>
     function makeDraggable(ballId) {
@@ -77,19 +76,7 @@
       document.addEventListener('mouseup', () => {
         isDragging = false;
         ball.style.cursor = 'grab';
-        checkCollision();
       });
-    }
-
-    function checkCollision() {
-      const a = document.getElementById('ballA').getBoundingClientRect();
-      const b = document.getElementById('ballB').getBoundingClientRect();
-      const dx = a.left - b.left;
-      const dy = a.top - b.top;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      if (distance < 60) {
-        alert('💥 전투 발생! 고려가 몽골의 침공을 막았습니다!');
-      }
     }
 
     makeDraggable('ballA');
@@ -97,4 +84,3 @@
   </script>
 </body>
 </html>
-
