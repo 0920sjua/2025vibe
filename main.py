@@ -54,7 +54,7 @@ quizzes = [
         "options": ["중국 상하이", "일본 도쿄", "미국 샌프란시스코", "러시아 블라디보스토크"],
         "answer": "중국 상하이",
         "explanation": "✅ 대한민국 임시정부는 중국 상하이에 설립되었습니다."
-    }
+    }]
 
 if "quiz_index" not in st.session_state:
     st.session_state.quiz_index = 0
