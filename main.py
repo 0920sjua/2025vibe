@@ -1,17 +1,30 @@
 import streamlit as st
-from urllib.parse import quote
+import openai
 
-st.set_page_config(page_title="YouTube 광고 링크 추천기", page_icon="📺")
-st.title("🔗 키워드 기반 YouTube 광고 검색기")
-st.caption("입력한 단어에 맞는 유튜브 광고 영상을 검색할 수 있도록 링크를 제공합니다.")
+st.set_page_config(page_title="이슈 대응 도우미", page_icon="🧠")
+st.title("🧠 키워드 기반 이슈 대처 가이드 & 역사적 배경")
 
-# 🔤 입력
-keyword = st.text_input("광고를 보고 싶은 단어를 입력하세요", placeholder="예: 커피, 운동화, 뿡, 초콜릿, 아이폰").strip()
+# 🔑 OpenAI API 키 입력
+openai.api_key = st.secrets["OPENAI_API_KEY"]  # .streamlit/secrets.toml 필요
 
-# ✅ 유튜브 검색 링크 생성
+keyword = st.text_input("이슈나 키워드를 입력하세요", placeholder="예: 폭염, 전쟁, 방사능, 바이러스, AI, 뿡")
+
 if keyword:
-    search_query = quote(f"{keyword} 광고")
-    youtube_link = f"https://www.youtube.com/results?search_query={search_query}"
-    
-    st.success(f"✅ '{keyword}' 관련 유튜브 광고를 검색하려면 아래 링크를 클릭하세요:")
-    st.markdown(f"👉 [🔎 유튜브에서 '{keyword} 광고' 검색하기]({youtube_link})")
+    with st.spinner("AI가 정보를 정리 중입니다..."):
+        prompt = f"""
+사용자가 '{keyword}'라는 단어를 입력했습니다.  
+이 단어와 관련된 아래 내용을 3단으로 짧고 정확하게 요약해줘:
+
+1. 간단한 설명 (한두 문장)
+2. 실용적인 대처법 또는 행동 요령
+3. 역사적 배경 또는 이전 사례 (있다면)
+
+말투는 친절하고, 가볍게 알려주는 뉴스처럼 써줘.
+"""
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        result = response.choices[0].message.content.strip()
+        st.success(f"✅ '{keyword}' 관련 정보")
+        st.markdown(result)
