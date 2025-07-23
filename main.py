@@ -39,6 +39,7 @@ if keyword and keyword in battle_data:
           margin: 20px auto;
           position: relative;
           background-color: #333;
+          overflow: hidden;
         }}
         .ball {{
           width: 60px;
@@ -58,6 +59,19 @@ if keyword and keyword in battle_data:
         #ballB {{ background-color: blue; left: 600px; top: 150px; }}
         #summary {{
           margin-top: 20px;
+        }}
+        .explosion {{
+          position: absolute;
+          width: 100px;
+          height: 100px;
+          background: radial-gradient(circle, orange, red, black);
+          border-radius: 50%;
+          animation: explode 0.4s ease-out;
+          pointer-events: none;
+        }}
+        @keyframes explode {{
+          0% {{ transform: scale(0.2); opacity: 1; }}
+          100% {{ transform: scale(2.5); opacity: 0; }}
         }}
       </style>
     </head>
@@ -115,13 +129,23 @@ if keyword and keyword in battle_data:
             ballB.style.transform = 'scale(1.5) rotate(-20deg)';
             ballA.style.boxShadow = '0 0 30px red';
             ballB.style.boxShadow = '0 0 30px blue';
+            createExplosion((a.left + b.left)/2 - 50, (a.top + b.top)/2 - 50);
             setTimeout(() => {{
               ballA.style.transform = 'scale(1) rotate(0deg)';
               ballB.style.transform = 'scale(1) rotate(0deg)';
               ballA.style.boxShadow = 'none';
               ballB.style.boxShadow = 'none';
-            }}, 300);
+            }}, 400);
           }}
+        }}
+
+        function createExplosion(x, y) {{
+          const explosion = document.createElement('div');
+          explosion.className = 'explosion';
+          explosion.style.left = x + 'px';
+          explosion.style.top = y + 'px';
+          document.getElementById('arena').appendChild(explosion);
+          setTimeout(() => explosion.remove(), 400);
         }}
 
         makeDraggable('ballA');
