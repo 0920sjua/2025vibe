@@ -3,7 +3,7 @@ import random
 
 st.set_page_config(page_title="한국사 이미지 퀴즈", layout="centered")
 st.markdown("""
-<h1 style='text-align: center; background: linear-gradient(to bottom, red, blue); -webkit-background-clip: text; color: transparent;'>📚 한국사 1등급 맞기! 🏺🗡️</h1>
+<h1 style='text-align: center;'>📚 <span style='background: linear-gradient(to bottom, red, blue); -webkit-background-clip: text; color: transparent;'>한국사</span> 1등급 맞기! 🏺🗡️</h1>
 """, unsafe_allow_html=True)
 
 quizzes = [
