@@ -1,20 +1,29 @@
 import streamlit as st
-from urllib.parse import quote
 import streamlit.components.v1 as components
 
-st.set_page_config(page_title="키워드 광고 보기", page_icon="📺")
-st.title("📺 키워드 기반 광고 영상 보여주기")
+st.set_page_config(page_title="광고 추천기", page_icon="📺")
+st.title("📺 키워드 기반 광고 영상 보기")
 
-# 사용자 단어 입력
+# 간단한 키워드별 영상 매핑 사전
+video_map = {
+    "커피": "https://www.youtube.com/embed/1q-Lyzvhnm0",  # 맥심 모카골드 광고
+    "햄버거": "https://www.youtube.com/embed/twY_FMDbAbE",  # 맥도날드 광고
+    "운동화": "https://www.youtube.com/embed/ZTId2nZ33zQ",  # 나이키 광고
+    "여행": "https://www.youtube.com/embed/FKfLrXHhRRI",  # 대한항공 광고
+    "아이폰": "https://www.youtube.com/embed/c7nRTF2SowQ",  # Apple 광고
+    "초콜릿": "https://www.youtube.com/embed/9RrgQb2FUhc",  # 가나 초콜릿 광고
+}
+
+# 입력 받기
 keyword = st.text_input("광고를 보고 싶은 키워드를 입력하세요", placeholder="예: 커피, 운동화, 햄버거")
 
+# 결과
 if keyword:
-    # YouTube 검색 URL 생성
-    search_query = quote(f"{keyword} 광고")
-    youtube_search_url = f"https://www.youtube.com/results?search_query={search_query}"
+    video_url = video_map.get(keyword.strip())
 
-    st.markdown(f"🔍 '{keyword}'에 대한 광고를 유튜브에서 검색 중...")
-
-    # YouTube 임베드 - 첫 영상 예측 (동적 미리보기)
-    st.markdown("👇 아래는 YouTube 검색 결과 페이지입니다.")
-    components.iframe(youtube_search_url, height=600, scrolling=True)
+    if video_url:
+        st.success(f"✅ '{keyword}' 관련 광고 영상입니다:")
+        components.iframe(video_url, height=360)
+    else:
+        st.warning("😅 아직 이 키워드에 대한 광고 영상은 등록되지 않았어요.")
+        st.info("예: 커피, 햄버거, 운동화, 여행, 아이폰, 초콜릿")
