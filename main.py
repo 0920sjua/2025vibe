@@ -60,7 +60,7 @@ if "next" not in st.session_state:
 if st.session_state.quiz_index < len(quizzes):
     q = quizzes[st.session_state.quiz_index]
 
-    st.image(q["image_url"], caption=q["caption"], use_column_width=True)
+    st.image(q["image_url"], caption=q["caption"], use_container_width=True)
     st.markdown("**질문:**")
     st.write(q["question"])
 
