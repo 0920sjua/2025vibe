@@ -6,7 +6,7 @@ st.title("🖼️ 깜짝! 한국사국사 퀴즈")
 
 quizzes = [
     {
-        "image_url": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Turtle_ship_model.jpg",
+        "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV_VORmJQUsajxnnJ5u3axX2561gx-CW017A&s",
         "caption": "거북선 전체 모습",
         "question": "이순신이 탄 배의 이름은?",
         "options": ["바닥배", "겨울왕국의배", "용머리 배","거북선"],
@@ -14,7 +14,7 @@ quizzes = [
         "explanation": "✅ 거북선은 이순신 장군님께서 타신 배의이름입니다"
     },
     {
-        "image_url": "https://upload.wikimedia.org/wikipedia/commons/7/7e/General_Gang_Gam-chan.jpg",
+        "image_url": "https://i.namu.wiki/i/VwZNvG4mEd4yK_jmwrtUD14DoUWU2VvrmXQgs4jdVZdHW4NWWYq9xoGsRvnJ6-0W7eED3igHt56B5pqtx0t5Hw.webp",
         "caption": "강감찬 장군 초상화 (고려 귀주대첩)",
         "question": "귀주대첩은 어느 민족의 침입을 막은 전투였나요?",
         "options": ["몽골", "거란", "왜구", "여진"],
