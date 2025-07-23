@@ -12,6 +12,14 @@ battle_data = {
 
 # 사용자 입력
 st.set_page_config(page_title="전투 구슬", layout="centered")
+st.markdown("""
+<style>
+    .main, body, html {
+        background-color: black;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 st.title("⚔️ 한국사 전투 시뮬레이션")
 keyword = st.text_input("역사 키워드를 입력하세요 (예: 몽골, 일본, 청나라, 미국, 명나라)")
 
@@ -26,8 +34,12 @@ if keyword and keyword in battle_data:
       <meta charset=\"UTF-8\">
       <title>{opponent} vs {keyword} 전투 시뮬레이션</title>
       <style>
+        html, body {{
+          background-color: black;
+          margin: 0;
+          padding: 0;
+        }}
         body {{
-          background-color: #1e1e1e;
           color: white;
           font-family: sans-serif;
           text-align: center;
