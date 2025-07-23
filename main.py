@@ -22,7 +22,7 @@ quizzes = [
         "explanation": "✅ 고려의 강감찬 장군이 거란족을 물리친 전투입니다."
     },
     {
-        "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Admiral_Yi_Sun-sin.jpg/640px-Admiral_Yi_Sun-sin.jpg",
+        "image_url": "https://cdn.edujin.co.kr/news/photo/202208/39617_80825_108.jpg",
         "caption": "이순신 장군 초상화",
         "question": "이순신 장군이 활약한 전쟁은 무엇인가요?",
         "options": ["병자호란", "임진왜란", "정묘호란", "신미양요"],
