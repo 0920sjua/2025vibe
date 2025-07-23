@@ -54,8 +54,8 @@ if keyword and keyword in battle_data:
           overflow: hidden;
         }}
         .ball {{
-          width: 60px;
-          height: 60px;
+          width: 100px;
+          height: 100px;
           border-radius: 50%;
           position: absolute;
           cursor: grab;
@@ -64,7 +64,7 @@ if keyword and keyword in battle_data:
           display: flex;
           justify-content: center;
           align-items: center;
-          font-size: 14px;
+          font-size: 16px;
           transition: transform 0.2s ease, box-shadow 0.2s ease;
         }}
         #ballA {{ background-color: red; left: 100px; top: 150px; }}
@@ -130,42 +130,4 @@ if keyword and keyword in battle_data:
 
         function checkCollision() {{
           const ballA = document.getElementById('ballA');
-          const ballB = document.getElementById('ballB');
-          const a = ballA.getBoundingClientRect();
-          const b = ballB.getBoundingClientRect();
-          const dx = a.left - b.left;
-          const dy = a.top - b.top;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-          if (distance < 60) {{
-            ballA.style.transform = 'scale(1.5) rotate(20deg)';
-            ballB.style.transform = 'scale(1.5) rotate(-20deg)';
-            ballA.style.boxShadow = '0 0 30px red';
-            ballB.style.boxShadow = '0 0 30px blue';
-            createExplosion((a.left + b.left)/2 - 50, (a.top + b.top)/2 - 50);
-            setTimeout(() => {{
-              ballA.style.transform = 'scale(1) rotate(0deg)';
-              ballB.style.transform = 'scale(1) rotate(0deg)';
-              ballA.style.boxShadow = 'none';
-              ballB.style.boxShadow = 'none';
-            }}, 400);
-          }}
-        }}
-
-        function createExplosion(x, y) {{
-          const explosion = document.createElement('div');
-          explosion.className = 'explosion';
-          explosion.style.left = x + 'px';
-          explosion.style.top = y + 'px';
-          document.getElementById('arena').appendChild(explosion);
-          setTimeout(() => explosion.remove(), 400);
-        }}
-
-        makeDraggable('ballA');
-        makeDraggable('ballB');
-      </script>
-    </body>
-    </html>
-    """
-    components.html(html_content, height=600)
-else:
-    st.info("위 예시 중 하나의 키워드를 입력하세요: 몽골, 일본, 청나라, 미국, 명나라")
+          con
