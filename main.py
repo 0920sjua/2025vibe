@@ -52,37 +52,32 @@ if "quiz_index" not in st.session_state:
     st.session_state.score = 0
     random.shuffle(quizzes)
 
-q = quizzes[st.session_state.quiz_index]
+if st.session_state.quiz_index < len(quizzes):
+    q = quizzes[st.session_state.quiz_index]
 
-st.image(q["image_url"], caption=q["caption"], use_column_width=True)
-st.markdown("**질문:**")
-st.write(q["question"])
+    st.image(q["image_url"], caption=q["caption"], use_column_width=True)
+    st.markdown("**질문:**")
+    st.write(q["question"])
 
-choice = st.radio("답을 선택하세요:", q["options"], key=f"question_{st.session_state.quiz_index}")
+    choice = st.radio("답을 선택하세요:", q["options"], key=f"question_{st.session_state.quiz_index}")
 
-if st.button("제출하기"):
-    if choice == q["answer"]:
-        st.success("정답입니다! " + q["explanation"])
-        st.session_state.score += 1
-    else:
-        st.error(f"오답입니다. ❌ 정답: {q['answer']}\n\n{q['explanation']}")
+    if st.button("제출하기", key=f"submit_{st.session_state.quiz_index}"):
+        if choice == q["answer"]:
+            st.success("정답입니다! " + q["explanation"])
+            st.session_state.score += 1
+        else:
+            st.error(f"오답입니다. ❌ 정답: {q['answer']}\n\n{q['explanation']}")
 
-    st.session_state.quiz_index += 1
-    if st.session_state.quiz_index >= len(quizzes):
-        st.write("---")
-        st.subheader(f"🎉 퀴즈 종료! 총 점수: {st.session_state.score} / {len(quizzes)}")
-        if st.button("처음부터 다시 시작하기"):
-            st.session_state.quiz_index = 0
-            st.session_state.score = 0
-            random.shuffle(quizzes)
-        st.stop()
-    else:
-        st.session_state.next = True
-
-if st.session_state.get("next"):
-    st.session_state.next = False
-    st.experimental_rerun()
+        st.session_state.quiz_index += 1
+        st.experimental_rerun()
+else:
+    st.write("---")
+    st.subheader(f"🎉 퀴즈 종료! 총 점수: {st.session_state.score} / {len(quizzes)}")
+    if st.button("처음부터 다시 시작하기"):
+        st.session_state.quiz_index = 0
+        st.session_state.score = 0
+        random.shuffle(quizzes)
+        st.experimental_rerun()
 
 st.write("---")
 st.markdown("더 많은 역사 이미지 퀴즈를 계속 추가해드릴까요? 🏯")
-
