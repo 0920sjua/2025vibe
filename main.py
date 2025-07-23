@@ -1,67 +1,41 @@
 import streamlit as st
 import streamlit.components.v1 as components
+from urllib.parse import quote
 
-st.set_page_config(page_title="키워드 광고/웹 추천기", page_icon="🔍")
-st.title("🔍 단어 기반 광고 또는 공식 웹사이트 추천기")
-st.caption("단어를 입력하면 광고 영상 또는 관련된 공식 웹사이트를 추천해드립니다!")
+st.set_page_config(page_title="YouTube 광고 추천기", page_icon="📺")
+st.title("📺 단어 기반 YouTube 광고 추천기")
+st.caption("단어를 입력하면 관련된 광고 영상을 유튜브에서 찾아 보여드립니다!")
 
-# ✅ 광고 키워드 DB (영상 또는 사이트 링크)
-keyword_map = {
-    # 명확한 광고 매핑
-    "커피": "https://www.starbucks.co.kr/",
-    "햄버거": "https://www.mcdonalds.co.kr/kor/main.do",
-    "치킨": "https://www.bbq.co.kr/",
-    "피자": "https://www.dominos.co.kr/",
-    "라면": "https://www.nongshim.com/",
-    "아이폰": "https://www.apple.com/kr/iphone/",
-    "갤럭시": "https://www.samsung.com/sec/smartphones/",
-    "에어팟": "https://www.apple.com/kr/airpods/",
-    "운동화": "https://www.nike.com/kr/",
-    "초콜릿": "https://www.lotteconf.co.kr/",
-    "자동차": "https://www.hyundai.com/kr/ko",
-    "여행": "https://www.agoda.com/ko-kr",
-    "호텔": "https://www.hotelscombined.co.kr/",
-    "배달": "https://www.baemin.com/",
-    "콜라": "https://www.coca-cola.co.kr/",
-    "스타벅스": "https://www.starbucks.co.kr/",
-    
-    # ✅ 유머/유사 확장 키워드
-    "뿡": "https://www.toto.co.kr/",  # 변기 브랜드
-    "방구": "https://www.lgcare.com/product/air_freshener",  # 방향제
-    "화장실": "https://www.kyowon.co.kr/business/housing/",
-    "냄새": "https://www.febreze.co.kr/",  # 페브리즈
-    "변기": "https://www.insaengmall.co.kr/",  # 변기 리모델링
-    "방향제": "https://www.ambipur.co.kr/",
-    "탈취제": "https://www.gmarket.co.kr/n/product?keyword=탈취제"
-}
+# 사용자 입력
+keyword = st.text_input("광고를 보고 싶은 단어를 입력하세요", placeholder="예: 커피, 운동화, 뿡, 아이폰")
 
-# 🔤 사용자 입력
-keyword = st.text_input("단어를 입력하세요 (예: 커피, 뿡, 방구, 햄버거, 아이폰)").strip()
-
+# 입력 처리
 if keyword:
-    url = keyword_map.get(keyword)
+    query = quote(f"{keyword} 광고")
+    youtube_search_url = f"https://www.youtube.com/results?search_query={query}"
     
-    if url:
-        st.success(f"✅ '{keyword}' 관련 추천 링크입니다:")
-        st.markdown(f"👉 [클릭해서 이동하기]({url})")
-        # 웹사이트 임베드 (일부만 iframe 허용)
-        if "youtube.com/embed" in url:
-            components.iframe(url, height=360)
-        else:
-            st.info("웹사이트로 이동합니다. 새 창에서 여는 것이 더 좋을 수 있어요.")
+    # 유튜브 자동 임베드 시도 (최상단 영상 예상 ID 미리 넣는 방식)
+    # 기본 영상 매핑 (직접 확인한 ID들)
+    fallback_videos = {
+        "커피": "1q-Lyzvhnm0",
+        "운동화": "ZTId2nZ33zQ",
+        "아이폰": "c7nRTF2SowQ",
+        "에어팟": "x3GczcT4PtI",
+        "햄버거": "twY_FMDbAbE",
+        "치킨": "JY3ZBR2lY3Y",
+        "피자": "BbgTz4tSYGs",
+        "제로콜라": "XgtTzTLms0U",
+        "뿡": "rIJoOa6x-rE",   # 신라면 광고로 유머 처리
+        "방구": "SaT7fTtyWxY", # 샴푸 광고 등 우회
+    }
+
+    video_id = fallback_videos.get(keyword.strip())
+
+    if video_id:
+        st.success(f"✅ '{keyword}' 관련 광고 영상입니다:")
+        video_url = f"https://www.youtube.com/embed/{video_id}"
+        components.iframe(video_url, height=360)
     else:
-        st.warning("🔍 아직 등록되지 않은 단어예요.")
-        st.info("예: 커피, 뿡, 콜라, 라면, 운동화, 방구, 변기, 호텔 등")
-
-# 💬 FAQ
-with st.expander("❓ 자주 묻는 질문"):
-    st.markdown("""
-**Q. 이상한 단어 넣어도 되나요?**  
-→ 네! "뿡", "방구", "냄새"처럼 유머 있는 단어도 알아듣고 관련 제품으로 연결해드려요.
-
-**Q. 왜 영상 대신 사이트가 나오나요?**  
-→ 일부 환경에서는 YouTube 영상이 막히거나 느려서, 확실히 열리는 공식 웹사이트를 대신 추천해드립니다.
-
-**Q. 내가 원하는 단어를 추가할 수 있나요?**  
-→ 물론입니다! 다음 버전에 반영하거나 자동 검색 기능도 넣을 수 있어요.
-""")
+        st.warning("😅 정확한 광고 영상은 찾기 어려워요.")
+        st.info(f"👉 [YouTube에서 직접 '{keyword} 광고' 검색하기]({youtube_search_url})")
+        components.iframe(youtube_search_url, height=600, scrolling=True)
