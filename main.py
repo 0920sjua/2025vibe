@@ -54,14 +54,6 @@ quizzes = [
         "explanation": "✅ 세종대왕은 백성을 위해 훈민정음을 창제했습니다."
     },
     {
-        "image_url": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Hong_Gyeongnae.jpg",
-        "caption": "홍경래의 난 지도와 설명",
-        "question": "홍경래의 난은 어느 왕의 시기에 일어났나요?",
-        "options": ["정조", "순조", "영조", "헌종"],
-        "answer": "순조",
-        "explanation": "✅ 홍경래의 난은 조선 후기 순조 대에 발생한 민란입니다."
-    },
-    {
         "image_url": "https://upload.wikimedia.org/wikipedia/commons/3/3f/Daehan_Jeonggukgi.jpg",
         "caption": "대한제국 국기 (태극기 초기형)",
         "question": "대한제국을 선포한 조선의 황제는 누구인가요?",
