@@ -52,7 +52,7 @@ if keyword and keyword in battle_data:
           justify-content: center;
           align-items: center;
           font-size: 14px;
-          transition: transform 0.2s ease;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
         }}
         #ballA {{ background-color: red; left: 100px; top: 150px; }}
         #ballB {{ background-color: blue; left: 600px; top: 150px; }}
@@ -103,18 +103,24 @@ if keyword and keyword in battle_data:
         }}
 
         function checkCollision() {{
-          const a = document.getElementById('ballA').getBoundingClientRect();
-          const b = document.getElementById('ballB').getBoundingClientRect();
+          const ballA = document.getElementById('ballA');
+          const ballB = document.getElementById('ballB');
+          const a = ballA.getBoundingClientRect();
+          const b = ballB.getBoundingClientRect();
           const dx = a.left - b.left;
           const dy = a.top - b.top;
           const distance = Math.sqrt(dx * dx + dy * dy);
           if (distance < 60) {{
-            document.getElementById('ballA').style.transform = 'scale(1.2)';
-            document.getElementById('ballB').style.transform = 'scale(1.2)';
+            ballA.style.transform = 'scale(1.5) rotate(20deg)';
+            ballB.style.transform = 'scale(1.5) rotate(-20deg)';
+            ballA.style.boxShadow = '0 0 30px red';
+            ballB.style.boxShadow = '0 0 30px blue';
             setTimeout(() => {{
-              document.getElementById('ballA').style.transform = 'scale(1)';
-              document.getElementById('ballB').style.transform = 'scale(1)';
-            }}, 200);
+              ballA.style.transform = 'scale(1) rotate(0deg)';
+              ballB.style.transform = 'scale(1) rotate(0deg)';
+              ballA.style.boxShadow = 'none';
+              ballB.style.boxShadow = 'none';
+            }}, 300);
           }}
         }}
 
