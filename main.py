@@ -46,7 +46,52 @@ quizzes = [
         "explanation": "✅ 해인사는 팔만대장경이 보관된 장경판전으로 유명한 사찰입니다."
     }
 ]
-
+ "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/86/King_Sejong_statue_in_Gwanghwamun_Square.jpg",
+        "caption": "세종대왕 동상 (광화문 광장)",
+        "question": "세종대왕이 만든 문자는 무엇인가요?",
+        "options": ["훈민정음", "이두문", "향찰", "가림토"],
+        "answer": "훈민정음",
+        "explanation": "✅ 세종대왕은 백성을 위해 훈민정음을 창제했습니다."
+    },
+    {
+        "image_url": "https://upload.wikimedia.org/wikipedia/commons/b/b8/Hong_Gyeongnae.jpg",
+        "caption": "홍경래의 난 지도와 설명",
+        "question": "홍경래의 난은 어느 왕의 시기에 일어났나요?",
+        "options": ["정조", "순조", "영조", "헌종"],
+        "answer": "순조",
+        "explanation": "✅ 홍경래의 난은 조선 후기 순조 대에 발생한 민란입니다."
+    },
+    {
+        "image_url": "https://upload.wikimedia.org/wikipedia/commons/3/3f/Daehan_Jeonggukgi.jpg",
+        "caption": "대한제국 국기 (태극기 초기형)",
+        "question": "대한제국을 선포한 조선의 황제는 누구인가요?",
+        "options": ["고종", "순종", "흥선대원군", "철종"],
+        "answer": "고종",
+        "explanation": "✅ 고종은 1897년 대한제국을 선포하고 황제에 즉위했습니다."
+         {
+        "image_url": "https://upload.wikimedia.org/wikipedia/commons/f/fd/Yuji_Sohn_1909.jpg",
+        "caption": "안중근 의사 초상화",
+        "question": "안중근 의사가 처단한 인물은 누구인가요?",
+        "options": ["이토 히로부미", "도요토미 히데요시", "고노에 후미마로", "요시다 쇼인"],
+        "answer": "이토 히로부미",
+        "explanation": "✅ 안중근 의사는 하얼빈에서 이토 히로부미를 처단했습니다."
+    },
+    {
+        "image_url": "https://upload.wikimedia.org/wikipedia/commons/e/e2/March_First_Movement.jpg",
+        "caption": "3.1운동 태극기 시위 장면",
+        "question": "3.1 운동이 일어난 해는 언제인가요?",
+        "options": ["1910년", "1919년", "1923년", "1931년"],
+        "answer": "1919년",
+        "explanation": "✅ 3.1 운동은 1919년 전국적으로 일어난 독립운동입니다."
+    },
+    {
+        "image_url": "https://upload.wikimedia.org/wikipedia/commons/3/34/Kim_Koo_2.jpg",
+        "caption": "백범 김구 선생",
+        "question": "김구 선생이 이끈 임시정부는 어느 나라에 있었나요?",
+        "options": ["중국 상하이", "일본 도쿄", "미국 샌프란시스코", "러시아 블라디보스토크"],
+        "answer": "중국 상하이",
+        "explanation": "✅ 대한민국 임시정부는 중국 상하이에 설립되었습니다."
+    },
 if "quiz_index" not in st.session_state:
     st.session_state.quiz_index = 0
     st.session_state.score = 0
