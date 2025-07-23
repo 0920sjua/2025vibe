@@ -2,7 +2,7 @@ import streamlit as st
 import random
 
 st.set_page_config(page_title="한국사 이미지 퀴즈", layout="centered")
-st.title("🖼️ 한국사 이미지 퀴즈")
+st.title("📚 한국사 1등급 맞기! 🏺🗡️")
 
 quizzes = [
     {
