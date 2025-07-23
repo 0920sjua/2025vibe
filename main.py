@@ -2,68 +2,76 @@ import streamlit as st
 import random
 import time
 
-# 🎰 심볼 목록
+# 🎰 룰렛 심볼
 symbols = ["🍒", "🍋", "🔔", "⭐", "🍉", "💎"]
 
-# 잭팟 보드 및 상태 초기화
-if "jackpot_board" not in st.session_state:
-    st.session_state.jackpot_board = [random.choice(symbols) for _ in range(10)]
-
+# 보드 상태
 if "current_index" not in st.session_state:
     st.session_state.current_index = 0
-
+if "board" not in st.session_state:
+    st.session_state.board = [random.choice(symbols) for _ in range(10)]
 if "spinning" not in st.session_state:
     st.session_state.spinning = False
+if "animation_done" not in st.session_state:
+    st.session_state.animation_done = False
 
-st.set_page_config(page_title="잭팟 룰렛", page_icon="🎰")
-st.title("🎰 타이밍 잭팟 룰렛")
-st.caption("회전 중에 '🛑 멈추기' 버튼을 눌러 잭팟을 노려보세요!")
+# 페이지 설정
+st.set_page_config(page_title="애니 룰렛", page_icon="🎰")
+st.title("🎰 진짜 돌아가는 잭팟 룰렛")
+st.caption("멈추기 타이밍을 잘 맞춰보세요! 돌아갑니다...")
 
-# 보드 출력 함수
-def draw_board(selected_index=None):
+# 룰렛 보드 출력 함수
+def draw_board(highlight_index):
     board_output = ""
-    for i, symbol in enumerate(st.session_state.jackpot_board):
-        if i == selected_index:
-            board_output += f"➡️ **{symbol}** ⬅️\n"
+    for i, s in enumerate(st.session_state.board):
+        if i == highlight_index:
+            board_output += f"➡️ **{s}** ⬅️\n"
         else:
-            board_output += f"　　{symbol}　　  \n"
+            board_output += f"　　{s}　　  \n"
     st.markdown(board_output)
 
-draw_board(st.session_state.current_index)
+# 룰렛 애니메이션 함수
+def spin_animation():
+    delays = [0.05] * 10 + [0.07] * 5 + [0.1] * 5 + [0.15] * 3 + [0.2] * 2 + [0.3]  # 점점 느려짐
+    total_steps = len(delays)
+    for i in range(total_steps):
+        st.session_state.current_index = (st.session_state.current_index + 1) % 10
+        draw_board(st.session_state.current_index)
+        time.sleep(delays[i])
+        st.experimental_rerun()
 
-# 돌리기 버튼
+# 버튼 영역
 col1, col2 = st.columns(2)
 
 with col1:
-    if not st.session_state.spinning and st.button("🎯 룰렛 시작"):
+    if not st.session_state.spinning and st.button("🎯 룰렛 돌리기"):
         st.session_state.spinning = True
-        st.session_state.jackpot_board = [random.choice(symbols) for _ in range(10)]
-
-        # 회전 효과
-        for _ in range(20):
-            st.session_state.current_index = (st.session_state.current_index + 1) % 10
-            draw_board(st.session_state.current_index)
-            time.sleep(0.1)
-
-        st.success("🌀 룰렛이 회전 중입니다! 이제 멈춰보세요.")
+        st.session_state.board = [random.choice(symbols) for _ in range(10)]
+        st.session_state.animation_done = False
+        spin_animation()
 
 with col2:
     if st.session_state.spinning and st.button("🛑 멈추기"):
         st.session_state.spinning = False
-        selected_symbol = st.session_state.jackpot_board[st.session_state.current_index]
-        st.success(f"🎉 멈춘 위치: **{selected_symbol}**")
+        st.session_state.animation_done = True
+        result = st.session_state.board[st.session_state.current_index]
+        st.success(f"🎉 멈춘 심볼: **{result}**")
 
-        # 결과 메시지
-        if selected_symbol == "💎":
+        if result == "💎":
             st.balloons()
             st.markdown("💎 **잭팟! 최고의 행운입니다!**")
-        elif selected_symbol == "⭐":
+        elif result == "⭐":
             st.markdown("⭐ **좋은 선택이에요!**")
         else:
-            st.markdown("🙂 아쉽지만 다음 기회를!")
+            st.markdown("🙂 아쉽지만 다음 기회에!")
 
-# 다시하기 버튼
+# 룰렛 보드 출력 (애니메이션 외)
+if not st.session_state.spinning:
+    draw_board(st.session_state.current_index)
+
+# 다시하기
 if st.button("🔄 다시하기"):
-    st.session_state.jackpot_board = [random.choice(symbols) for _ in range(10)]
-    st.session_state.current_index = 0
     st.session_state.spinning = False
+    st.session_state.animation_done = False
+    st.session_state.board = [random.choice(symbols) for _ in range(10)]
+    st.session_state.current_index = 0
