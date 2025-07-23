@@ -46,8 +46,15 @@ quizzes = [
         "options": ["통도사", "해인사", "불국사", "송광사"],
         "answer": "해인사",
         "explanation": "✅ 해인사는 팔만대장경이 보관된 장경판전으로 유명한 사찰입니다."
+    },
+ {
+        "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFnqzKCRTWaUiukAGW2GNnAcLF_-lfHC9Ovg&s",
+        "caption": "백범 김구 선생",
+        "question": "김구 선생이 이끈 임시정부는 어느 나라에 있었나요?",
+        "options": ["중국 상하이", "일본 도쿄", "미국 샌프란시스코", "러시아 블라디보스토크"],
+        "answer": "중국 상하이",
+        "explanation": "✅ 대한민국 임시정부는 중국 상하이에 설립되었습니다."
     }
-]
 
 if "quiz_index" not in st.session_state:
     st.session_state.quiz_index = 0
