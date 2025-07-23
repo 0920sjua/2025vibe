@@ -78,14 +78,10 @@ if st.session_state.quiz_index < len(quizzes):
 
 if st.session_state.next:
     st.session_state.next = False
-    st.session_state.rerun_trigger = True
-
-if st.session_state.quiz_index >= len(quizzes):
-    if st.session_state.get("rerun_trigger"):
-    st.session_state.rerun_trigger = False
     st.experimental_rerun()
 
-st.write("---")
+if st.session_state.quiz_index >= len(quizzes):
+    st.write("---")
     st.subheader(f"🎉 퀴즈 종료! 총 점수: {st.session_state.score} / {len(quizzes)}")
     if st.button("처음부터 다시 시작하기"):
         st.session_state.quiz_index = 0
