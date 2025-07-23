@@ -2,18 +2,6 @@ import streamlit as st
 import random
 
 st.set_page_config(page_title="한국사 이미지 퀴즈", layout="centered")
-
-st.markdown("""
-    <style>
-    .stApp {
-        background-image: url('https://cdn.teamturing.com/cms/webflow/sat_thumbnail/2023-03-10-04-01.png');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        opacity: 0.95;
-    }
-    </style>
-""", unsafe_allow_html=True)
 st.markdown("""
 <h1 style='text-align: center;'>📚 <span style='background: linear-gradient(to bottom, red, blue); -webkit-background-clip: text; color: transparent;'>한국사</span> 1등급 맞기! 🏺🗡️</h1>
 """, unsafe_allow_html=True)
@@ -58,7 +46,8 @@ quizzes = [
         "options": ["통도사", "해인사", "불국사", "송광사"],
         "answer": "해인사",
         "explanation": "✅ 해인사는 팔만대장경이 보관된 장경판전으로 유명한 사찰입니다."
-    }, {
+    },
+ {
         "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFnqzKCRTWaUiukAGW2GNnAcLF_-lfHC9Ovg&s",
         "caption": "백범 김구 선생",
         "question": "김구 선생이 이끈 임시정부는 어느 나라에 있었나요?",
@@ -96,14 +85,10 @@ if st.session_state.quiz_index < len(quizzes):
 
 if st.session_state.next:
     st.session_state.next = False
-    st.session_state.rerun_trigger = True
-
-if st.session_state.quiz_index >= len(quizzes):
-    if st.session_state.get("rerun_trigger"):
-    st.session_state.rerun_trigger = False
     st.experimental_rerun()
 
-st.write("---")
+if st.session_state.quiz_index >= len(quizzes):
+    st.write("---")
     st.subheader(f"🎉 퀴즈 종료! 총 점수: {st.session_state.score} / {len(quizzes)}")
     if st.button("처음부터 다시 시작하기"):
         st.session_state.quiz_index = 0
