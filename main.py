@@ -1,100 +1,135 @@
 import streamlit as st
+import cv2
+import time
+import numpy as np
 import random
+import pandas as pd
+from datetime import datetime
+import os
 
-st.set_page_config(page_title="한국사 이미지 퀴즈", layout="centered")
-st.markdown("""
-<h1 style='text-align: center;'>📚 <span style='background: linear-gradient(to bottom, red, blue); -webkit-background-clip: text; color: transparent;'>한국사</span> 1등급 맞기! 🏺🗡️</h1>
-""", unsafe_allow_html=True)
+st.set_page_config(page_title="공부 타이머 & 집중도 기록", page_icon="📚", layout="wide")
+st.title("📚 공부 타이머 & 집중도 기록")
 
-quizzes = [
-    {
-        "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSV_VORmJQUsajxnnJ5u3axX2561gx-CW017A&s",
-        "caption": "거북선 전체 모습",
-        "question": "이순신이 탄 배의 이름은?",
-        "options": ["바닥배", "겨울왕국의배", "용머리 배", "거북선"],
-        "answer": "거북선",
-        "explanation": "✅ 거북선은 이순신 장군님께서 타신 배의 이름입니다."
-    },
-    {
-        "image_url": "https://i.namu.wiki/i/VwZNvG4mEd4yK_jmwrtUD14DoUWU2VvrmXQgs4jdVZdHW4NWWYq9xoGsRvnJ6-0W7eED3igHt56B5pqtx0t5Hw.webp",
-        "caption": "강감찬 장군 초상화 (고려 귀주대첩)",
-        "question": "귀주대첩은 어느 민족의 침입을 막은 전투였나요?",
-        "options": ["몽골", "거란", "왜구", "여진"],
-        "answer": "거란",
-        "explanation": "✅ 고려의 강감찬 장군이 거란족을 물리친 전투입니다."
-    },
-    {
-        "image_url": "https://cdn.edujin.co.kr/news/photo/202208/39617_80825_108.jpg",
-        "caption": "이순신 장군 초상화",
-        "question": "이순신 장군이 활약한 전쟁은 무엇인가요?",
-        "options": ["병자호란", "임진왜란", "정묘호란", "신미양요"],
-        "answer": "임진왜란",
-        "explanation": "✅ 이순신 장군은 임진왜란 당시 수군을 이끌어 활약했습니다."
-    },
-    {
-        "image_url": "https://upload.wikimedia.org/wikipedia/commons/3/34/Seokguram_Buddha.jpg",
-        "caption": "경주 석굴암 내부 불상",
-        "question": "이 불상이 위치한 유적지는 어디인가요?",
-        "options": ["불국사", "석굴암", "화엄사", "해인사"],
-        "answer": "석굴암",
-        "explanation": "✅ 석굴암은 경주의 불국사와 함께 유네스코 세계문화유산으로 지정된 석굴 사찰입니다."
-    },
-    {
-        "image_url": "https://upload.wikimedia.org/wikipedia/commons/d/df/Tripitaka_Koreana_Woodblocks.jpg",
-        "caption": "팔만대장경 목판 (해인사 장경판전)",
-        "question": "팔만대장경이 보관된 사찰은 어디인가요?",
-        "options": ["통도사", "해인사", "불국사", "송광사"],
-        "answer": "해인사",
-        "explanation": "✅ 해인사는 팔만대장경이 보관된 장경판전으로 유명한 사찰입니다."
-    },
- {
-        "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFnqzKCRTWaUiukAGW2GNnAcLF_-lfHC9Ovg&s",
-        "caption": "백범 김구 선생",
-        "question": "김구 선생이 이끈 임시정부는 어느 나라에 있었나요?",
-        "options": ["중국 상하이", "일본 도쿄", "미국 샌프란시스코", "러시아 블라디보스토크"],
-        "answer": "중국 상하이",
-        "explanation": "✅ 대한민국 임시정부는 중국 상하이에 설립되었습니다."
-    }]
+# =====================
+# 동기부여 문구 30개
+# =====================
+motivations = [
+    "🚀 지금 이 순간이 당신의 미래를 만든다!",
+    "🔥 포기하지 않는 한, 실패는 없다!",
+    "🌱 작은 습관이 큰 변화를 만든다.",
+    "💪 오늘의 땀방울이 내일의 성취다.",
+    "🎯 목표를 향해 한 걸음 더!",
+    "📚 꾸준함이 최고의 무기다.",
+    "🏆 노력은 배신하지 않는다.",
+    "🌟 당신은 생각보다 훨씬 강하다.",
+    "⏳ 완벽한 순간을 기다리지 말고 지금 시작하라.",
+    "⚡ 기회는 준비된 자에게 온다.",
+    "📖 오늘 배우는 것이 내일의 무기가 된다.",
+    "🚴‍♂️ 천천히 가도 멈추지 않으면 된다.",
+    "🧠 집중은 최고의 생산성 도구다.",
+    "🌞 하루의 첫 1시간이 하루 전체를 만든다.",
+    "🛠️ 꾸준함은 재능을 이긴다.",
+    "🌊 파도는 멈추지 않는다. 너도 멈추지 마라.",
+    "🔥 지금의 선택이 미래를 만든다.",
+    "🎵 작은 진전도 진전이다.",
+    "🌻 오늘 심은 씨앗은 내일 꽃이 된다.",
+    "🏃‍♀️ 시작이 반이다.",
+    "🧗 도전 없이는 성장도 없다.",
+    "📅 오늘을 최선을 다해 살아라.",
+    "🕰️ 시간이 부족한 게 아니라, 우선순위가 문제다.",
+    "🪴 하루하루가 쌓여 인생이 된다.",
+    "⚙️ 실패는 시도했다는 증거다.",
+    "🌟 불가능은 단지 시간이 더 필요한 것뿐이다.",
+    "💡 배움은 평생의 자산이다.",
+    "🚪 문이 닫히면 다른 문을 찾아라.",
+    "🌍 작은 변화가 세상을 바꾼다.",
+    "💖 자신을 믿는 것이 시작이다."
+]
 
-if "quiz_index" not in st.session_state:
-    st.session_state.quiz_index = 0
-    st.session_state.score = 0
-    random.shuffle(quizzes)
+# =====================
+# 공부 기록 불러오기
+# =====================
+RECORD_FILE = "study_record.csv"
+if os.path.exists(RECORD_FILE):
+    records_df = pd.read_csv(RECORD_FILE)
+else:
+    records_df = pd.DataFrame(columns=["날짜", "과목", "공부시간(분)", "집중도(%)"])
 
-if "next" not in st.session_state:
-    st.session_state.next = False
+# =====================
+# 과목 선택 & 공부 시간 입력
+# =====================
+subject = st.selectbox("📖 공부할 과목 선택", ["수학", "영어", "정법", "국어", "한지", "생윤"])
+study_minutes = st.number_input("공부 시간(분)", min_value=1, value=25)
+break_minutes = st.number_input("휴식 시간(분)", min_value=1, value=5)
 
-if st.session_state.quiz_index < len(quizzes):
-    q = quizzes[st.session_state.quiz_index]
+if "focus_score" not in st.session_state:
+    st.session_state.focus_score = 0
+if "frames_checked" not in st.session_state:
+    st.session_state.frames_checked = 0
 
-    st.image(q["image_url"], caption=q["caption"], use_container_width=True)
-    st.markdown("**질문:**")
-    st.write(q["question"])
+start_button = st.button("타이머 시작")
 
-    choice = st.radio("답을 선택하세요:", q["options"], key=f"question_{st.session_state.quiz_index}")
+# =====================
+# 타이머 실행
+# =====================
+if start_button:
+    st.write(f"📚 '{subject}' 공부 시작!")
+    end_time = time.time() + (study_minutes * 60)
+    last_motivation_time = time.time()
+    current_motivation = random.choice(motivations)
 
-    if st.button("제출하기", key=f"submit_{st.session_state.quiz_index}"):
-        if choice == q["answer"]:
-            st.success("정답입니다! " + q["explanation"])
-            st.session_state.score += 1
-        else:
-            st.error(f"오답입니다. ❌ 정답: {q['answer']}\n\n{q['explanation']}")
+    camera = cv2.VideoCapture(0)
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
-        st.session_state.quiz_index += 1
-        st.session_state.next = True
+    placeholder_timer = st.empty()
+    placeholder_focus = st.empty()
+    placeholder_motivation = st.empty()
 
-if st.session_state.next:
-    st.session_state.next = False
-    st.experimental_rerun()
+    while time.time() < end_time:
+        ret, frame = camera.read()
+        if not ret:
+            st.error("카메라를 불러올 수 없습니다.")
+            break
 
-if st.session_state.quiz_index >= len(quizzes):
-    st.write("---")
-    st.subheader(f"🎉 퀴즈 종료! 총 점수: {st.session_state.score} / {len(quizzes)}")
-    if st.button("처음부터 다시 시작하기"):
-        st.session_state.quiz_index = 0
-        st.session_state.score = 0
-        random.shuffle(quizzes)
-        st.experimental_rerun()
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        faces = face_cascade.detectMultiScale(gray, 1.1, 4)
 
-st.write("---")
-st.markdown("더 많은 역사 이미지 퀴즈를 계속 추가해드릴까요? 🏯")
+        st.session_state.frames_checked += 1
+        if len(faces) > 0:
+            st.session_state.focus_score += 1
+
+        # 타이머 표시
+        remaining_time = int(end_time - time.time())
+        minutes = remaining_time // 60
+        seconds = remaining_time % 60
+        placeholder_timer.subheader(f"남은 공부 시간: {minutes:02}:{seconds:02}")
+
+        # 집중도 표시
+        focus_percent = (st.session_state.focus_score / st.session_state.frames_checked) * 100
+        placeholder_focus.progress(int(focus_percent))
+        placeholder_focus.write(f"집중도: {focus_percent:.1f}%")
+
+        # 10분마다 동기부여 문구 변경
+        if time.time() - last_motivation_time >= 600:
+            current_motivation = random.choice(motivations)
+            last_motivation_time = time.time()
+
+        placeholder_motivation.markdown(f"### 💡 {current_motivation}")
+
+        time.sleep(1)
+
+    camera.release()
+    st.success("⏰ 공부 세션 종료!")
+
+    # =====================
+    # 기록 저장
+    # =====================
+    today = datetime.now().strftime("%Y-%m-%d")
+    total_focus = (st.session_state.focus_score / st.session_state.frames_checked) * 100
+    new_record = pd.DataFrame([[today, subject, study_minutes, round(total_focus, 1)]],
+                              columns=["날짜", "과목", "공부시간(분)", "집중도(%)"])
+    records_df = pd.concat([records_df, new_record], ignore_index=True)
+    records_df.to_csv(RECORD_FILE, index=False)
+
+    st.write("📄 오늘 기록이 저장되었습니다!")
+    st.dataframe(records_df)
