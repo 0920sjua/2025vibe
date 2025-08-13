@@ -1,135 +1,130 @@
 import streamlit as st
-import cv2
-import time
-import numpy as np
-import random
 import pandas as pd
-from datetime import datetime
-import os
+import datetime
+import time
+import random
 
-st.set_page_config(page_title="공부 타이머 & 집중도 기록", page_icon="📚", layout="wide")
-st.title("📚 공부 타이머 & 집중도 기록")
+# -------------------------------
+# cv2 불러오기 (없으면 기능 비활성)
+# -------------------------------
+try:
+    import cv2
+    CV2_AVAILABLE = True
+except ImportError:
+    CV2_AVAILABLE = False
 
-# =====================
-# 동기부여 문구 30개
-# =====================
-motivations = [
-    "🚀 지금 이 순간이 당신의 미래를 만든다!",
-    "🔥 포기하지 않는 한, 실패는 없다!",
-    "🌱 작은 습관이 큰 변화를 만든다.",
-    "💪 오늘의 땀방울이 내일의 성취다.",
-    "🎯 목표를 향해 한 걸음 더!",
-    "📚 꾸준함이 최고의 무기다.",
-    "🏆 노력은 배신하지 않는다.",
-    "🌟 당신은 생각보다 훨씬 강하다.",
-    "⏳ 완벽한 순간을 기다리지 말고 지금 시작하라.",
-    "⚡ 기회는 준비된 자에게 온다.",
-    "📖 오늘 배우는 것이 내일의 무기가 된다.",
-    "🚴‍♂️ 천천히 가도 멈추지 않으면 된다.",
-    "🧠 집중은 최고의 생산성 도구다.",
-    "🌞 하루의 첫 1시간이 하루 전체를 만든다.",
-    "🛠️ 꾸준함은 재능을 이긴다.",
-    "🌊 파도는 멈추지 않는다. 너도 멈추지 마라.",
-    "🔥 지금의 선택이 미래를 만든다.",
-    "🎵 작은 진전도 진전이다.",
-    "🌻 오늘 심은 씨앗은 내일 꽃이 된다.",
-    "🏃‍♀️ 시작이 반이다.",
-    "🧗 도전 없이는 성장도 없다.",
-    "📅 오늘을 최선을 다해 살아라.",
-    "🕰️ 시간이 부족한 게 아니라, 우선순위가 문제다.",
-    "🪴 하루하루가 쌓여 인생이 된다.",
-    "⚙️ 실패는 시도했다는 증거다.",
-    "🌟 불가능은 단지 시간이 더 필요한 것뿐이다.",
-    "💡 배움은 평생의 자산이다.",
-    "🚪 문이 닫히면 다른 문을 찾아라.",
-    "🌍 작은 변화가 세상을 바꾼다.",
-    "💖 자신을 믿는 것이 시작이다."
+# -------------------------------
+# 기본 설정
+# -------------------------------
+st.set_page_config(page_title="공부 타이머", page_icon="📚", layout="centered")
+
+motivation_messages = [
+    "조금만 더 하면 목표에 가까워집니다!",
+    "집중은 최고의 무기입니다!",
+    "오늘의 노력은 내일의 자신감!",
+    "포기하지 말고 한 걸음 더!",
+    "작은 습관이 큰 변화를 만듭니다.",
+    "공부는 배신하지 않는다.",
+    "쉬운 길 말고 옳은 길을 가자.",
+    "이 시간은 다시 오지 않는다.",
+    "남과 비교하지 말고 어제의 나와 비교하자.",
+    "성공은 준비된 자의 것.",
+    "끝까지 가면 이긴다.",
+    "노력은 절대 헛되지 않는다.",
+    "오늘도 성장 중!",
+    "시작이 반이다.",
+    "네가 포기하지 않는 한 끝난 게 아니다.",
+    "조금 힘들면 성장하고 있다는 증거.",
+    "하루하루 쌓아가자.",
+    "오늘 공부는 내일의 자산.",
+    "성실은 최고의 재능.",
+    "불가능은 없다.",
+    "끝까지 집중!",
+    "목표는 멀어도 한 걸음씩.",
+    "좋은 습관은 최고의 친구.",
+    "오늘의 1시간이 미래의 1년을 만든다.",
+    "지금의 너를 이겨라.",
+    "집중하는 순간 불가능은 사라진다.",
+    "실패는 성장의 일부다.",
+    "꾸준함이 승리한다.",
+    "노력 없이는 결과도 없다.",
+    "조금 더, 단 10분만!"
 ]
 
-# =====================
-# 공부 기록 불러오기
-# =====================
-RECORD_FILE = "study_record.csv"
-if os.path.exists(RECORD_FILE):
-    records_df = pd.read_csv(RECORD_FILE)
-else:
-    records_df = pd.DataFrame(columns=["날짜", "과목", "공부시간(분)", "집중도(%)"])
+subjects = ["수학", "영어", "정법", "국어", "한지", "생윤"]
 
-# =====================
-# 과목 선택 & 공부 시간 입력
-# =====================
-subject = st.selectbox("📖 공부할 과목 선택", ["수학", "영어", "정법", "국어", "한지", "생윤"])
-study_minutes = st.number_input("공부 시간(분)", min_value=1, value=25)
-break_minutes = st.number_input("휴식 시간(분)", min_value=1, value=5)
+# -------------------------------
+# 공부 기록 불러오기/저장
+# -------------------------------
+def load_records():
+    try:
+        return pd.read_csv("study_records.csv")
+    except FileNotFoundError:
+        return pd.DataFrame(columns=["날짜", "과목", "공부시간(분)"])
 
-if "focus_score" not in st.session_state:
-    st.session_state.focus_score = 0
-if "frames_checked" not in st.session_state:
-    st.session_state.frames_checked = 0
+def save_record(subject, minutes):
+    df = load_records()
+    today = datetime.date.today().strftime("%Y-%m-%d")
+    new_row = pd.DataFrame([[today, subject, minutes]], columns=df.columns)
+    df = pd.concat([df, new_row], ignore_index=True)
+    df.to_csv("study_records.csv", index=False)
 
-start_button = st.button("타이머 시작")
+# -------------------------------
+# 타이머 기능
+# -------------------------------
+if "running" not in st.session_state:
+    st.session_state.running = False
+if "start_time" not in st.session_state:
+    st.session_state.start_time = None
+if "elapsed_minutes" not in st.session_state:
+    st.session_state.elapsed_minutes = 0
+if "current_message" not in st.session_state:
+    st.session_state.current_message = random.choice(motivation_messages)
 
-# =====================
-# 타이머 실행
-# =====================
-if start_button:
-    st.write(f"📚 '{subject}' 공부 시작!")
-    end_time = time.time() + (study_minutes * 60)
-    last_motivation_time = time.time()
-    current_motivation = random.choice(motivations)
+subject = st.selectbox("공부할 과목을 선택하세요", subjects)
 
-    camera = cv2.VideoCapture(0)
-    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
+col1, col2 = st.columns(2)
+if col1.button("▶ 시작"):
+    st.session_state.running = True
+    st.session_state.start_time = time.time()
+if col2.button("⏹ 멈춤"):
+    st.session_state.running = False
+    if st.session_state.start_time:
+        elapsed = (time.time() - st.session_state.start_time) / 60
+        st.session_state.elapsed_minutes += elapsed
+        save_record(subject, round(st.session_state.elapsed_minutes))
+        st.success(f"{subject} {round(st.session_state.elapsed_minutes)}분 기록 저장 완료!")
+        st.session_state.elapsed_minutes = 0
 
-    placeholder_timer = st.empty()
-    placeholder_focus = st.empty()
-    placeholder_motivation = st.empty()
+# -------------------------------
+# 타이머 표시 + 동기부여 메시지 변경
+# -------------------------------
+if st.session_state.running:
+    elapsed = (time.time() - st.session_state.start_time) / 60
+    total_elapsed = st.session_state.elapsed_minutes + elapsed
+    st.metric("공부 시간(분)", f"{int(total_elapsed)}")
+    if int(total_elapsed) % 10 == 0:
+        st.session_state.current_message = random.choice(motivation_messages)
+    st.info(st.session_state.current_message)
 
-    while time.time() < end_time:
-        ret, frame = camera.read()
-        if not ret:
-            st.error("카메라를 불러올 수 없습니다.")
-            break
+# -------------------------------
+# 기록 보기
+# -------------------------------
+st.markdown("### 📜 공부 기록")
+st.dataframe(load_records())
 
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+# -------------------------------
+# 얼굴 탐지 (cv2 있을 경우만)
+# -------------------------------
+if CV2_AVAILABLE:
+    st.markdown("### 🙂 얼굴 감지 (집중도 체크)")
+    img_file = st.camera_input("사진을 찍어주세요")
+    if img_file is not None:
+        file_bytes = np.asarray(bytearray(img_file.read()), dtype=np.uint8)
+        img = cv2.imdecode(file_bytes, 1)
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
         faces = face_cascade.detectMultiScale(gray, 1.1, 4)
-
-        st.session_state.frames_checked += 1
-        if len(faces) > 0:
-            st.session_state.focus_score += 1
-
-        # 타이머 표시
-        remaining_time = int(end_time - time.time())
-        minutes = remaining_time // 60
-        seconds = remaining_time % 60
-        placeholder_timer.subheader(f"남은 공부 시간: {minutes:02}:{seconds:02}")
-
-        # 집중도 표시
-        focus_percent = (st.session_state.focus_score / st.session_state.frames_checked) * 100
-        placeholder_focus.progress(int(focus_percent))
-        placeholder_focus.write(f"집중도: {focus_percent:.1f}%")
-
-        # 10분마다 동기부여 문구 변경
-        if time.time() - last_motivation_time >= 600:
-            current_motivation = random.choice(motivations)
-            last_motivation_time = time.time()
-
-        placeholder_motivation.markdown(f"### 💡 {current_motivation}")
-
-        time.sleep(1)
-
-    camera.release()
-    st.success("⏰ 공부 세션 종료!")
-
-    # =====================
-    # 기록 저장
-    # =====================
-    today = datetime.now().strftime("%Y-%m-%d")
-    total_focus = (st.session_state.focus_score / st.session_state.frames_checked) * 100
-    new_record = pd.DataFrame([[today, subject, study_minutes, round(total_focus, 1)]],
-                              columns=["날짜", "과목", "공부시간(분)", "집중도(%)"])
-    records_df = pd.concat([records_df, new_record], ignore_index=True)
-    records_df.to_csv(RECORD_FILE, index=False)
-
-    st.write("📄 오늘 기록이 저장되었습니다!")
-    st.dataframe(records_df)
+        st.write(f"감지된 얼굴 수: {len(faces)}")
+else:
+    st.warning("⚠ OpenCV(cv2)가 설치되어 있지 않아 얼굴 감지 기능을 사용할 수 없습니다.")
